@@ -2,6 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
+  images: {
+    domains: [
+      'help.twitter.com',
+      'images.unsplash.com',
+      'lh3.googleusercontent.com',
+      'firebasestorage.googleapis.com',
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
