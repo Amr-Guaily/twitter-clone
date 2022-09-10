@@ -1,37 +1,60 @@
 import { SparklesIcon } from '@heroicons/react/outline';
+import { onSnapshot, orderBy, query } from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { tweetsCollectionRef } from '../../lib/firebase';
 import { AddTweet, Tweet } from '../index';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const dummy_data = [
-  {
-    id: '1',
-    name: 'Sahand Ghavidel',
-    username: 'codewithsahand',
-
-    img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=874&q=80',
-    text: 'nice view!',
-    timestamp: '2 hours ago',
-  },
-  {
-    id: '2',
-    name: 'Sahand Ghavidel',
-    username: 'codewithsahand',
-
-    img: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80',
-    text: 'wow!',
-    timestamp: '2 days ago',
-  },
-  {
-    id: '3',
-    name: 'Sahand Ghavidel',
-    username: 'codewithsahand',
-
-    img: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80',
-    text: 'wow!',
-    timestamp: '2 days ago',
-  },
-];
+// const dummy_data = [
+//   {
+//     id: '1',
+//     name: 'Sahand Ghavidel',
+//     username: 'codewithsahand',
+//     userImg: 'https://www.adscientificindex.com/pictures/0b/50734.jpg',
+//     img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=874&q=80',
+//     text: 'nice view!',
+//     timestamp: '2 hours ago',
+//   },
+//   {
+//     id: '2',
+//     name: 'Sahand Ghavidel',
+//     username: 'codewithsahand',
+//     userImg: 'https://www.adscientificindex.com/pictures/0b/50734.jpg',
+//     img: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80',
+//     text: 'wow!',
+//     timestamp: '2 days ago',
+//   },
+//   {
+//     id: '3',
+//     name: 'Sahand Ghavidel',
+//     username: 'codewithsahand',
+//     userImg: 'https://www.adscientificindex.com/pictures/0b/50734.jpg',
+//     img: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80',
+//     text: 'wow!',
+//     timestamp: '2 days ago',
+//   },
+// ];
 
 const Feed = () => {
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(true);
+  const [tweets, setTweets] = useState([]);
+
+  useEffect(() => {
+    const q = query(tweetsCollectionRef, orderBy('createdAt', 'desc'));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const result = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setTweets(result);
+      setLoading(false);
+    });
+
+    return unsub;
+  }, []);
+
   return (
     <div className="sm:ml-[75px] xl:ml-[300px] border-r border-l flex-1 max-w-[580px]">
       {/* Header */}
@@ -41,16 +64,26 @@ const Feed = () => {
           <SparklesIcon className="h-5" />
         </div>
       </div>
-
       {/* Add Tweet */}
-      <AddTweet />
-
+      {session && <AddTweet />}
       {/* Tweet */}
-      {dummy_data.map((tweetData) => (
-        <div key={tweetData.id}>
-          <Tweet tweet={tweetData} />
-        </div>
-      ))}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <AnimatePresence>
+          {tweets.map((tweetData) => (
+            <motion.div
+              key={tweetData.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              exit={{ opacity: 0 }}
+            >
+              <Tweet tweet={tweetData} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      )}
     </div>
   );
 };

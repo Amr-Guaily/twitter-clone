@@ -6,25 +6,12 @@ import {
   ShareIcon,
   TrashIcon,
 } from '@heroicons/react/outline';
-import { HeartIcon as HeartIconFilled } from '@heroicons/react/solid';
-import {
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  setDoc,
-} from 'firebase/firestore';
-import { deleteObject, ref } from 'firebase/storage';
-import { signIn, useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 import Moment from 'react-moment';
-import { storage, tweetsCollectionRef } from '../../lib/firebase';
-import { DeleteModal, CommentModal } from '../index';
+import { useSession } from 'next-auth/react';
 
 const Tweet = ({ tweet }) => {
   const { data: session } = useSession();
-
-  const { img, createdBy, username, text, createdAt, name } = tweet;
+  const { userImg, imageUrl, createdBy, userName, text, createdAt } = tweet;
 
   return (
     <div className="p-3 flex gap-2 border-b">
@@ -35,6 +22,7 @@ const Tweet = ({ tweet }) => {
           width="40px"
           height="40px"
           className="rounded-full"
+          src={userImg}
         />
       </div>
 
@@ -46,10 +34,10 @@ const Tweet = ({ tweet }) => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1 whitespace-nowrap">
               <h3 className="font-semibold text-[16px] hover:underline">
-                {name}
+                {createdBy}
               </h3>
               <div className="flex gap-1">
-                <span className="text-sm">@{username} - </span>
+                <span className="text-sm">@{userName} - </span>
                 <span className="text-sm">
                   <Moment fromNow>{createdAt?.toDate()}</Moment>
                 </span>
@@ -64,10 +52,10 @@ const Tweet = ({ tweet }) => {
         <p className="text-gray-800 my-2">{text}</p>
 
         {/* Tweet Image */}
-        {img && (
+        {imageUrl && (
           <img
             className="rounded-xl object-cover max-h-[550px] w-full"
-            src={img}
+            src={imageUrl}
             alt="tweet-img"
           />
         )}
