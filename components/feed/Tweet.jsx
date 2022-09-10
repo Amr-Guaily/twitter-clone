@@ -19,12 +19,13 @@ import {
 } from 'firebase/firestore';
 import { tweetsCollectionRef, storage } from '../../lib/firebase';
 import { deleteObject, ref } from 'firebase/storage';
-import { DeleteModal } from '../index';
+import { CommentModal, DeleteModal } from '../index';
 
 const Tweet = ({ tweet }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCommentModal, setShowCommentModal] = useState(false);
   const { data: session } = useSession();
   const { userImg, imageUrl, createdBy, userName, text, createdAt } = tweet;
 
@@ -122,7 +123,10 @@ const Tweet = ({ tweet }) => {
         {/* Icons - Actions */}
         <div className="flex items-center justify-between mt-3 text-gray-500">
           {/* Comment on tweet */}
-          <ChatIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
+          <ChatIcon
+            onClick={() => setShowCommentModal(true)}
+            className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
+          />
 
           {/* Delete tweet */}
           {tweet.userId === session?.user.id && (
@@ -153,6 +157,9 @@ const Tweet = ({ tweet }) => {
           setShow={setShowDeleteModal}
           deleteHandler={deleteHandler}
         />
+      )}
+      {showCommentModal && (
+        <CommentModal setShow={setShowCommentModal} tweetData={tweet} />
       )}
     </div>
   );
