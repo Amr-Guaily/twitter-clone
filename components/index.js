@@ -5,3 +5,8 @@ export { default as MiniProfile } from './sidebar/MiniProfile';
 export { default as Feed } from './feed/Feed';
 export { default as AddTweet } from './feed/AddTweet';
 export { default as Tweet } from './feed/Tweet';
+
+export { default as Widgets } from './widgets/Widgets';
+export { default as SearchInput } from './widgets/SearchInput';
+export { default as News } from './widgets/News.jsx';
+export { default as RandomUsers } from './widgets/RandomUsers';
