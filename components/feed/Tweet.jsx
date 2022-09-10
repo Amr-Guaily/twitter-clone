@@ -19,10 +19,12 @@ import {
 } from 'firebase/firestore';
 import { tweetsCollectionRef, storage } from '../../lib/firebase';
 import { deleteObject, ref } from 'firebase/storage';
+import { DeleteModal } from '../index';
 
 const Tweet = ({ tweet }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { data: session } = useSession();
   const { userImg, imageUrl, createdBy, userName, text, createdAt } = tweet;
 
@@ -66,10 +68,8 @@ const Tweet = ({ tweet }) => {
   const deleteHandler = async () => {
     const docRef = doc(tweetsCollectionRef, tweet.id);
     const storageRef = ref(storage, `posts/${docRef.id}/tweetImg`);
-    if (window.confirm('Are you sure you want to delete that tweet?')) {
-      await deleteDoc(docRef);
-      if (imageUrl) deleteObject(storageRef);
-    }
+    await deleteDoc(docRef);
+    if (imageUrl) deleteObject(storageRef);
   };
 
   return (
@@ -127,7 +127,7 @@ const Tweet = ({ tweet }) => {
           {/* Delete tweet */}
           {tweet.userId === session?.user.id && (
             <TrashIcon
-              onClick={deleteHandler}
+              onClick={() => setShowDeleteModal(true)}
               className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"
             />
           )}
@@ -146,6 +146,14 @@ const Tweet = ({ tweet }) => {
           <ChartBarIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
         </div>
       </div>
+
+      {/* Modales */}
+      {showDeleteModal && (
+        <DeleteModal
+          setShow={setShowDeleteModal}
+          deleteHandler={deleteHandler}
+        />
+      )}
     </div>
   );
 };

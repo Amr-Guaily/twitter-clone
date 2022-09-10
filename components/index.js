@@ -10,3 +10,6 @@ export { default as Widgets } from './widgets/Widgets';
 export { default as SearchInput } from './widgets/SearchInput';
 export { default as News } from './widgets/News.jsx';
 export { default as RandomUsers } from './widgets/RandomUsers';
+
+export { default as Backdrop } from './modals/Backdrop';
+export { default as DeleteModal } from './modals/DeleteModal';
