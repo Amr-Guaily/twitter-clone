@@ -1,12 +1,15 @@
 import { EmojiHappyIcon, PhotographIcon } from '@heroicons/react/outline';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 const AddTweet = () => {
+  const { data: session } = useSession();
   const [input, setInput] = useState('');
 
   return (
     <div className="flex p-3 border-b">
       <img
+        src={session?.user.image}
         alt="user-img"
         className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95"
       />

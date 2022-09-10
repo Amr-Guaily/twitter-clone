@@ -8,8 +8,11 @@ import {
   InboxIcon,
   UserIcon,
 } from '@heroicons/react/outline';
+import { useSession } from 'next-auth/react';
 
 const Menu = () => {
+  const { data: session } = useSession();
+
   const MENU_ICONS = [
     { name: 'Home', icon: <HomeIcon /> },
     { name: 'Explore', icon: <HashtagIcon /> },
@@ -24,7 +27,7 @@ const Menu = () => {
   return (
     <>
       <div className="mt-3 mb-2.5">
-        {MENU_ICONS.map((itm) => (
+        {MENU_ICONS.slice(0, !session ? 2 : -1).map((itm) => (
           <div
             key={itm.name}
             className="hoverEffect flex items-center justify-center xl:justify-start gap-3 text-gray-700"

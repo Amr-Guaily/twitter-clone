@@ -18,7 +18,7 @@ export default function Home({ news, randomUsers }) {
         <Feed />
 
         {/* Widgets */}
-        <Widgets news={news.articles} randomUsers={randomUsers.results} />
+        <Widgets news={news.articles} />
       </main>
     </div>
   );
@@ -31,11 +31,11 @@ export async function getServerSideProps() {
   ).then((res) => res.json());
 
   // Fetch News
-  const randomUsers = await fetch(
-    'https://randomuser.me/api/?results=25&inc=name,login,picture'
-  ).then((res) => res.json());
+  // const randomUsers = await fetch(
+  //   'https://randomuser.me/api/?results=25&inc=name,login,picture'
+  // ).then((res) => res.json());
 
   return {
-    props: { news, randomUsers },
+    props: { news },
   };
 }
