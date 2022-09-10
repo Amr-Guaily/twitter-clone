@@ -6,12 +6,62 @@ import {
   ShareIcon,
   TrashIcon,
 } from '@heroicons/react/outline';
+import { HeartIcon as FilledHeartIcon } from '@heroicons/react/solid';
 import Moment from 'react-moment';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  setDoc,
+} from 'firebase/firestore';
+import { tweetsCollectionRef } from '../../lib/firebase';
 
 const Tweet = ({ tweet }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState([]);
   const { data: session } = useSession();
   const { userImg, imageUrl, createdBy, userName, text, createdAt } = tweet;
+
+  // Like Functionality
+  useEffect(() => {
+    const q = collection(tweetsCollectionRef, tweet.id, 'likes');
+    const unsub = onSnapshot(q, (snapshot) => {
+      const result = snapshot.docs.map((doc) => doc.id);
+      setLikes(result);
+    });
+
+    return unsub;
+  }, []);
+
+  // Check if the current user is already liked or not
+  useEffect(() => {
+    setIsLiked(likes.findIndex((id) => id === session?.user.id) !== -1);
+  }, [likes]);
+
+  console.log(likes);
+
+  const likeHandler = async () => {
+    if (session) {
+      const docRef = doc(
+        tweetsCollectionRef,
+        tweet.id,
+        'likes',
+        session?.user.id
+      );
+      if (!isLiked) {
+        await setDoc(docRef, { userName: session?.user.userName });
+        setIsLiked(true);
+      } else {
+        await deleteDoc(docRef);
+        setIsLiked(false);
+      }
+    } else {
+      signIn();
+    }
+  };
 
   return (
     <div className="p-3 flex gap-2 border-b">
@@ -71,7 +121,14 @@ const Tweet = ({ tweet }) => {
           )}
 
           {/* Like tweet */}
-          <HeartIcon className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
+          <div className="flex items-center" onClick={likeHandler}>
+            {isLiked ? (
+              <FilledHeartIcon className="h-9 w-9 hoverEffect p-2 text-red-600 hover:bg-red-100" />
+            ) : (
+              <HeartIcon className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
+            )}
+            {likes.length > 0 && <span>{likes.length}</span>}
+          </div>
 
           <ShareIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
           <ChartBarIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
