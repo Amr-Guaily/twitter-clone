@@ -17,7 +17,8 @@ import {
   onSnapshot,
   setDoc,
 } from 'firebase/firestore';
-import { tweetsCollectionRef } from '../../lib/firebase';
+import { tweetsCollectionRef, storage } from '../../lib/firebase';
+import { deleteObject, ref } from 'firebase/storage';
 
 const Tweet = ({ tweet }) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -41,8 +42,6 @@ const Tweet = ({ tweet }) => {
     setIsLiked(likes.findIndex((id) => id === session?.user.id) !== -1);
   }, [likes]);
 
-  console.log(likes);
-
   const likeHandler = async () => {
     if (session) {
       const docRef = doc(
@@ -60,6 +59,16 @@ const Tweet = ({ tweet }) => {
       }
     } else {
       signIn();
+    }
+  };
+
+  // Delete Functionality
+  const deleteHandler = async () => {
+    const docRef = doc(tweetsCollectionRef, tweet.id);
+    const storageRef = ref(storage, `posts/${docRef.id}/tweetImg`);
+    if (window.confirm('Are you sure you want to delete that tweet?')) {
+      await deleteDoc(docRef);
+      if (imageUrl) deleteObject(storageRef);
     }
   };
 
@@ -117,7 +126,10 @@ const Tweet = ({ tweet }) => {
 
           {/* Delete tweet */}
           {tweet.userId === session?.user.id && (
-            <TrashIcon className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
+            <TrashIcon
+              onClick={deleteHandler}
+              className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"
+            />
           )}
 
           {/* Like tweet */}
