@@ -38,11 +38,13 @@ const Tweet = ({ tweet }) => {
     });
 
     return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Check if the current user is already liked or not
   useEffect(() => {
     setIsLiked(likes.findIndex((id) => id === session?.user.id) !== -1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [likes]);
 
   const likeHandler = async () => {

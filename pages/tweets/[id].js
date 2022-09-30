@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { tweetsCollectionRef } from '../../lib/firebase';
 
-const TweetDetails = ({ news, randomUsers }) => {
+const TweetDetails = ({ news }) => {
   const [tweetDoc, setTweetDoc] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +27,8 @@ const TweetDetails = ({ news, randomUsers }) => {
       setTweetDoc({ ...doc.data(), id: doc.id });
       setLoading(false);
     });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch Comments
@@ -41,6 +43,7 @@ const TweetDetails = ({ news, randomUsers }) => {
     });
 
     return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return <Loader />;
@@ -64,12 +67,12 @@ const TweetDetails = ({ news, randomUsers }) => {
           <div>{<Tweet tweet={tweetDoc} />}</div>
           <div>
             {comments?.map((comment) => (
-              <Comment comment={comment} />
+              <Comment key={comment.id} comment={comment} />
             ))}
           </div>
         </div>
 
-        <Widgets news={news.articles} randomUsers={randomUsers.results} />
+        <Widgets news={news.articles} />
       </div>
 
       <Loginbar />
@@ -91,11 +94,11 @@ export async function getServerSideProps({ res }) {
   ).then((res) => res.json());
 
   // Fetch News
-  const randomUsers = await fetch(
-    'https://randomuser.me/api/?results=25&inc=name,login,picture'
-  ).then((res) => res.json());
+  // const randomUsers = await fetch(
+  //   'https://randomuser.me/api/?results=25&inc=name,login,picture'
+  // ).then((res) => res.json());
 
   return {
-    props: { news, randomUsers },
+    props: { news },
   };
 }

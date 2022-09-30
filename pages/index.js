@@ -1,6 +1,6 @@
 import { Sidebar, Feed, Widgets, Loginbar } from '../components/index';
 
-export default function Home({ news, randomUsers }) {
+export default function Home({ news }) {
   return (
     <div>
       <main className="flex justify-center min-h-screen max-w-[1200px] mx-auto">
@@ -11,7 +11,7 @@ export default function Home({ news, randomUsers }) {
         <Feed />
 
         {/* Widgets */}
-        <Widgets news={news.articles} randomUsers={randomUsers.results} />
+        <Widgets news={news.articles} />
       </main>
 
       {/* Login bar */}
@@ -32,11 +32,11 @@ export async function getServerSideProps({ res }) {
   ).then((res) => res.json());
 
   // Fetch News
-  const randomUsers = await fetch(
-    'https://randomuser.me/api/?results=25&inc=name,login,picture'
-  ).then((res) => res.json());
+  // const randomUsers = await fetch(
+  //   'https://randomuser.me/api/?results=25&inc=name,login,picture'
+  // ).then((res) => res.json());
 
   return {
-    props: { news, randomUsers },
+    props: { news },
   };
 }
