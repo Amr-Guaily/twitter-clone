@@ -5,7 +5,7 @@ const RandomUsers = ({ randomUsers }) => {
   const [count, setCount] = useState(3);
 
   return (
-    <div className="sticky top-[26.5rem] text-gray-700 bg-gray-100 rounded-xl p-3">
+    <div className="sticky top-[25rem] text-gray-700 bg-gray-100 rounded-xl p-3">
       <h2 className="font-bold text-xl mb-3">Who to follow</h2>
       <div className="max-h-[180px] overflow-auto no-scrollbar">
         {randomUsers

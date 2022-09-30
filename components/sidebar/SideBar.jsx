@@ -1,4 +1,4 @@
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Menu, MiniProfile } from '../index';
 
@@ -21,23 +21,6 @@ const Sidebar = () => {
 
         {/* Menu */}
         <Menu />
-
-        {/* Tweet Btn */}
-        {session && (
-          <button className="bg-sky-500 text-white rounded-full w-56 h-12 font-bold shadow-md hover:brightness-95 text-lg hidden xl:inline">
-            Tweet
-          </button>
-        )}
-
-        {/* Signin Btn*/}
-        {!session && (
-          <button
-            className="bg-sky-500 text-white rounded-full w-40 h-12 font-bold shadow-md hover:brightness-95 text-lg hidden xl:inline"
-            onClick={signIn}
-          >
-            Sign in
-          </button>
-        )}
 
         {/* MiniProfile */}
         {session && <MiniProfile />}

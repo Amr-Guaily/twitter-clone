@@ -74,7 +74,7 @@ const Tweet = ({ tweet }) => {
   };
 
   return (
-    <div className="p-3 flex gap-2 border-b">
+    <div className="p-3 flex gap-2 border-b hover:bg-gray-100 cursor-pointer transition duration-150">
       {/* user Image */}
       <div>
         <img
@@ -124,20 +124,32 @@ const Tweet = ({ tweet }) => {
         <div className="flex items-center justify-between mt-3 text-gray-500">
           {/* Comment on tweet */}
           <ChatIcon
-            onClick={() => setShowCommentModal(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowCommentModal(true);
+            }}
             className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
           />
 
           {/* Delete tweet */}
           {tweet.userId === session?.user.id && (
             <TrashIcon
-              onClick={() => setShowDeleteModal(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteModal(true);
+              }}
               className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"
             />
           )}
 
           {/* Like tweet */}
-          <div className="flex items-center" onClick={likeHandler}>
+          <div
+            className="flex items-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              likeHandler();
+            }}
+          >
             {isLiked ? (
               <FilledHeartIcon className="h-9 w-9 hoverEffect p-2 text-red-600 hover:bg-red-100" />
             ) : (

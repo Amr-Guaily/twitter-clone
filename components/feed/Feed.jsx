@@ -3,8 +3,10 @@ import { onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { tweetsCollectionRef } from '../../lib/firebase';
-import { AddTweet, Tweet } from '../index';
+import { AddTweet, Tweet, Loader } from '../index';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // const dummy_data = [
 //   {
@@ -40,6 +42,7 @@ const Feed = () => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [tweets, setTweets] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const q = query(tweetsCollectionRef, orderBy('createdAt', 'desc'));
@@ -68,7 +71,7 @@ const Feed = () => {
       {session && <AddTweet />}
       {/* Tweet */}
       {loading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : (
         <AnimatePresence>
           {tweets.map((tweetData) => (
@@ -79,7 +82,9 @@ const Feed = () => {
               transition={{ duration: 0.5 }}
               exit={{ opacity: 0 }}
             >
-              <Tweet tweet={tweetData} />
+              <div onClick={() => router.push(`/tweets/${tweetData.id}`)}>
+                <Tweet tweet={tweetData} />
+              </div>
             </motion.div>
           ))}
         </AnimatePresence>

@@ -5,13 +5,16 @@ import { motion } from 'framer-motion';
 const DeleteModal = ({ setShow, deleteHandler }) => {
   if (typeof window === 'object') {
     return reactDom.createPortal(
-      <div className="w-full h-full fixed top-0 left-0 flex justify-center z-20">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full h-full fixed top-0 left-0 flex justify-center z-20"
+      >
         <Backdrop setShow={setShow} />
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
           className="bg-white rounded-xl p-4 fixed w-[30rem] top-[40vh] shadow-md text-center"
         >
           <p className=" font-semibold text-lg text-gray-700">

@@ -6,7 +6,8 @@ const Backdrop = ({ setShow }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         setShow(false);
       }}
       className="w-full bg-black/50 "

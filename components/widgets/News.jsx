@@ -5,7 +5,7 @@ const News = ({ news }) => {
   const [count, setCount] = useState(3);
 
   return (
-    <div className="sticky top-20 text-gray-700 bg-gray-100 rounded-xl">
+    <div className="sticky top-16 text-gray-700 bg-gray-100 rounded-xl">
       <h2 className="font-bold text-xl px-3 pt-3">What's happening</h2>
       <div className="max-h-[250px] overflow-auto no-scrollbar">
         {news

@@ -14,3 +14,7 @@ export { default as RandomUsers } from './widgets/RandomUsers';
 export { default as Backdrop } from './modals/Backdrop';
 export { default as DeleteModal } from './modals/DeleteModal';
 export { default as CommentModal } from './modals/CommentModal';
+
+export { default as Loader } from './Loader';
+export { default as Loginbar } from './Loginbar';
+export { default as Comment } from './Comment';

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Moment from 'react-moment';
 import { Backdrop } from '../index';
 import { motion } from 'framer-motion';
-import { EmojiHappyIcon, PhotographIcon, XIcon } from '@heroicons/react/solid';
+import { XIcon } from '@heroicons/react/solid';
 import { useSession } from 'next-auth/react';
 import { tweetsCollectionRef } from '../../lib/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
@@ -14,7 +14,7 @@ const CommentModal = ({ setShow, tweetData }) => {
   const { userImg, createdBy, userName, text, createdAt } = tweetData;
 
   const commentHandler = async () => {
-    const docRef = collection(tweetsCollectionRef, tweet.id, 'comments');
+    const docRef = collection(tweetsCollectionRef, tweetData.id, 'comments');
     await addDoc(docRef, {
       comment,
       createdAt: serverTimestamp(),
@@ -24,21 +24,24 @@ const CommentModal = ({ setShow, tweetData }) => {
     });
 
     setComment('');
-    setShowCommentModal(false);
+    setShow(false);
   };
 
   // Make sure we are on clint-side; portals only work on clint-side
   if (typeof window === 'object') {
     return reactDom.createPortal(
-      <div className="fixed w-full h-full top-0 left-0 flex justify-center z-20">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="fixed w-full h-full top-0 left-0 flex justify-center z-20"
+      >
         <Backdrop setShow={setShow} />
 
         {/* Comment Modal */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white rounded-xl fixed w-[30rem] top-[40vh] shadow-md py-2"
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-xl fixed w-[30rem] top-[25vh] shadow-md py-2"
         >
           {/* Close Modal */}
           <div
@@ -86,7 +89,7 @@ const CommentModal = ({ setShow, tweetData }) => {
             />
             <span className="absolute left-[47px] top-[-100%] z-[-1]  w-[1px] bg-gray-400 h-[70px]" />
             <div className="flex-1">
-              <input
+              <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="What's happening?"
@@ -96,14 +99,7 @@ const CommentModal = ({ setShow, tweetData }) => {
           </div>
 
           {/* Submit Comment */}
-          <div className="flex justify-between items-center pl-16 pr-6 mb-3">
-            <div className="flex text-sky-500">
-              <label>
-                <input type="file" hidden />
-                <PhotographIcon className="hoverEffect h-9 w-9 p-2 hover:bg-sky-100" />
-              </label>
-              <EmojiHappyIcon className="hoverEffect h-9 w-9 p-2 hover:bg-sky-100" />
-            </div>
+          <div className="flex justify-end items-center pl-16 pr-6 mb-3">
             <button
               disabled={!comment.trim()}
               onClick={commentHandler}

@@ -83,7 +83,7 @@ const AddTweet = () => {
           <div className="relative">
             <XIcon
               onClick={() => setFile(null)}
-              className="h-7 absolute top-2 left-2 cursor-pointer bg-white/90 hover:bg-white rounded-full text-gray-8-+00"
+              className="h-5 absolute top-2 left-2 cursor-pointer bg-white/90 hover:bg-white rounded-full text-gray-8-+00"
             />
             <img
               src={file}
@@ -100,7 +100,6 @@ const AddTweet = () => {
                 <input type="file" hidden onChange={fileHandler} />
                 <PhotographIcon className="hoverEffect h-9 w-9 p-2 hover:bg-sky-100" />
               </label>
-              <EmojiHappyIcon className="hoverEffect h-9 w-9 p-2 hover:bg-sky-100" />
             </div>
             <button
               type="submit"
