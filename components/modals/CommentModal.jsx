@@ -87,7 +87,7 @@ const CommentModal = ({ setShow, tweetData }) => {
               height="38px"
               className="rounded-full"
             />
-            <span className="absolute left-[47px] top-[-100%] z-[-1]  w-[1px] bg-gray-400 h-[70px]" />
+            <span className="absolute left-[47px] top-[-90%] z-[-1]  w-[1px] bg-gray-400 h-[70px]" />
             <div className="flex-1">
               <textarea
                 value={comment}

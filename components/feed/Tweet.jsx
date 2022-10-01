@@ -24,6 +24,7 @@ import { CommentModal, DeleteModal } from '../index';
 const Tweet = ({ tweet }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState([]);
+  const [comments, setComments] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCommentModal, setShowCommentModal] = useState(false);
   const { data: session } = useSession();
@@ -66,6 +67,20 @@ const Tweet = ({ tweet }) => {
       signIn();
     }
   };
+
+  useEffect(() => {
+    const q = collection(tweetsCollectionRef, tweet.id, 'comments');
+    const unsub = onSnapshot(q, (snapshot) => {
+      const results = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setComments(results);
+    });
+
+    return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Delete Functionality
   const deleteHandler = async () => {
@@ -125,13 +140,16 @@ const Tweet = ({ tweet }) => {
         {/* Icons - Actions */}
         <div className="flex items-center justify-between mt-3 text-gray-500">
           {/* Comment on tweet */}
-          <ChatIcon
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowCommentModal(true);
-            }}
-            className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
-          />
+          <div className="flex items-center">
+            <ChatIcon
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowCommentModal(true);
+              }}
+              className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
+            />
+            {comments.length > 0 && <span>{comments.length}</span>}
+          </div>
 
           {/* Delete tweet */}
           {tweet.userId === session?.user.id && (

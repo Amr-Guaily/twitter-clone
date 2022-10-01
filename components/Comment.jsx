@@ -6,10 +6,71 @@ import {
   TrashIcon,
 } from '@heroicons/react/outline';
 import { HeartIcon as FilledHeartIcon } from '@heroicons/react/solid';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  setDoc,
+} from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import Moment from 'react-moment';
+import { tweetsCollectionRef } from '../lib/firebase';
 
-const Comment = ({ comment }) => {
-  console.log(comment);
+const Comment = ({ comment, tweetId }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState([]);
+  const { data: session } = useSession();
+
+  // Add Like functionality
+  const likeHandler = async () => {
+    const docRef = doc(
+      tweetsCollectionRef,
+      tweetId,
+      'comments',
+      comment.id,
+      'likes',
+      session?.user.id
+    );
+    if (isLiked) {
+      setIsLiked(false);
+      await deleteDoc(docRef);
+    } else {
+      setIsLiked(true);
+      await setDoc(docRef, { userName: session?.user.userName });
+    }
+  };
+  useEffect(() => {
+    const q = collection(
+      tweetsCollectionRef,
+      tweetId,
+      'comments',
+      comment.id,
+      'likes'
+    );
+    const unsub = onSnapshot(q, (onSnapshot) => {
+      const results = onSnapshot.docs.map((doc) => doc.id);
+      setLikes(results);
+    });
+
+    return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setIsLiked(likes.findIndex((id) => id === session?.user.id) !== -1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [likes]);
+
+  // Delete functionality
+  const deleteHandler = async () => {
+    const docRef = doc(tweetsCollectionRef, tweetId, 'comments', comment.id);
+    if (window.confirm('Are you sure you want to delete that comment..')) {
+      await deleteDoc(docRef);
+    }
+  };
+
   return (
     <div className="p-3 flex gap-2 border-b hover:bg-gray-100 cursor-pointer transition duration-150">
       {/* user Image */}
@@ -51,11 +112,19 @@ const Comment = ({ comment }) => {
 
           {/* Delete Comment */}
 
-          <TrashIcon className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
+          <TrashIcon
+            onClick={deleteHandler}
+            className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"
+          />
 
           {/* Like Comment */}
-          <div className="flex items-center">
-            <HeartIcon className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
+          <div className="flex items-center" onClick={likeHandler}>
+            {isLiked ? (
+              <FilledHeartIcon className="h-9 w-9 hoverEffect p-2 text-red-600 hover:bg-red-100" />
+            ) : (
+              <HeartIcon className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
+            )}
+            {likes.length > 0 && <span>{likes.length}</span>}
           </div>
 
           <ShareIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />

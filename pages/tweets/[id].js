@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { tweetsCollectionRef } from '../../lib/firebase';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const TweetDetails = ({ news }) => {
   const [tweetDoc, setTweetDoc] = useState(null);
@@ -66,9 +67,19 @@ const TweetDetails = ({ news }) => {
           </div>
           <div>{<Tweet tweet={tweetDoc} />}</div>
           <div>
-            {comments?.map((comment) => (
-              <Comment key={comment.id} comment={comment} />
-            ))}
+            <AnimatePresence>
+              {comments?.map((comment) => (
+                <motion.div
+                  key={comment.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <Comment key={comment.id} comment={comment} tweetId={id} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </div>
 
