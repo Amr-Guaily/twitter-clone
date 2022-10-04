@@ -13,6 +13,8 @@ const CommentModal = ({ setShow, tweetData }) => {
   const [comment, setComment] = useState('');
   const { userImg, createdBy, userName, text, createdAt } = tweetData;
 
+  console.log('Comment Modal Re-render');
+
   const commentHandler = async () => {
     const docRef = collection(tweetsCollectionRef, tweetData.id, 'comments');
     await addDoc(docRef, {
@@ -21,6 +23,7 @@ const CommentModal = ({ setShow, tweetData }) => {
       name: session.user.name,
       username: session.user.userName,
       userImg: session.user.image,
+      userId: session.user.id,
     });
 
     setComment('');
